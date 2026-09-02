@@ -105,7 +105,8 @@ function isQualifiedForMeta(d: SurveyData): boolean {
   const okListed = d.listedOnMarket === 'not-listed'
   const okOwner = d.isLegalOwner !== 'no'
   const okCondition = d.condition !== 'excellent'
-  return okType && okListed && okOwner && okCondition
+  const okOwnership = d.ownershipLength !== 'less-than-3'
+  return okType && okListed && okOwner && okCondition && okOwnership
 }
 function leadQuality(score: number): 'premium' | 'standard' | 'low' {
   if (score >= 6) return 'premium'
@@ -117,6 +118,7 @@ function disqualifyReasonFor(d: SurveyData): string {
   if (d.listedOnMarket !== 'not-listed') return 'listed'
   if (d.isLegalOwner === 'no') return 'not_owner'
   if (d.condition === 'excellent') return 'excellent_condition'
+  if (d.ownershipLength === 'less-than-3') return 'ownership_length'
   return 'unknown'
 }
 // ──────────────────────────────────────────────────────────────────────
@@ -386,6 +388,10 @@ export function SurveyCard({ phoneDisplay = "(800) 000-0000", phoneHref = "80000
       setTimeout(() => { setDisqualifyReason("excellentCondition"); setIsDisqualified(true) }, 300)
       return
     }
+    if (field === "ownershipLength" && value === "less-than-3") {
+      setTimeout(() => { setDisqualifyReason("ownershipLength"); setIsDisqualified(true) }, 300)
+      return
+    }
 
     setTimeout(() => { if (step < totalSteps) setStep(step + 1) }, 300)
   }
@@ -436,6 +442,11 @@ export function SurveyCard({ phoneDisplay = "(800) 000-0000", phoneHref = "80000
         title: "We're Unable to Assist",
         message: "Unfortunately, we're not able to make an offer on this type of property at this time.",
         detail: "We primarily purchase single-family homes, multi-family properties, and condos/townhouses. If you have a different property you'd like to sell, feel free to reach out.",
+      },
+      ownershipLength: {
+        title: "We're Unable to Assist",
+        message: "We focus on homeowners who have owned their property for at least 3 years.",
+        detail: "If you've owned your home for 3 years or longer and are still seeing this, please give us a call and we'll take another look.",
       },
       outOfArea: {
         title: "Outside Our Service Area",
