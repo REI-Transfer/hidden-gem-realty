@@ -124,7 +124,13 @@ export function VideoGallery({ accentColor }: VideoGalleryProps) {
       {/* Main player */}
       <div className="flex-1">
         <div className="overflow-hidden rounded-2xl bg-black shadow-2xl">
-          <div className="relative aspect-video w-full">
+          <div
+            className={
+              selected.vertical
+                ? "relative mx-auto aspect-[9/16] w-full max-w-[300px]"
+                : "relative aspect-video w-full"
+            }
+          >
             {/* key forces a remount so only the selected video element loads */}
             <video
               key={selected.src}
